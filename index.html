@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>JAYDEN'S WORLD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Explore AVATAR WORLD — an interactive portfolio merging design, code, and emotion."
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #ffffff;
+        --text: #111111;
+        --accent: #00f6ff;
+        --mute: #f5f5f5;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* ----- BACKGROUND CANVAS ----- */
+      #bgCanvas {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      /* ----- TYPOGRAPHY ----- */
+      h1,
+      h2 {
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        line-height: 1;
+      }
+      h1 {
+        font-size: clamp(3rem, 8vw, 6rem);
+      }
+      h2 {
+        font-size: clamp(1.5rem, 4vw, 3rem);
+      }
+      p {
+        max-width: 65ch;
+        font-weight: 300;
+        margin: auto;
+      }
+
+      /* ----- HERO ----- */
+      .hero {
+        min-height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 2rem 1rem;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+      }
+      .hero-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: center;
+      }
+
+      .hero h1 {
+        margin: 5rem 0; /* Adjust values as needed */
+      }
+
+      /* ----- INTRO VIDEO WRAPPER ----- */
+      #avatarWrap {
+        position: relative;
+        width: clamp(400px, 63vw, 600px);
+        aspect-ratio: 1 / 1;
+        border-radius: 1rem;
+        overflow: hidden;
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0);
+        z-index: 2;
+        margin-bottom: 1rem;
+      }
+      #avatarWrap video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      #playOverlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0);
+        color: white;
+        font-size: 1.4rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+        transition: opacity 0.4s ease;
+        opacity: 1;
+        pointer-events: none;
+      }
+
+      /* ----- MAJOR PROJECT STRIP ----- */
+      .video-band {
+        position: relative;
+        width: 80vw;
+        left: 50%;
+        transform: translateX(-50%);
+        overflow: hidden;
+        background: #000;
+        aspect-ratio: 16/9;
+        cursor: pointer;
+        z-index: 2;
+      }
+      .video-band video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .fullscreen-btn {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border: none;
+        padding: 0.5rem 0.8rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        z-index: 3;
+      }
+      .video-caption {
+        text-align: center;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: #555;
+      }
+
+      /* ----- ABOUT ----- */
+      .about {
+        padding: 6rem 2rem;
+        max-width: 800px;
+        margin: auto;
+        text-align: center;
+        z-index: 2;
+        position: relative;
+      }
+
+      /* ----- FORM ----- */
+      .form-band {
+        padding: 6rem 2rem;
+        display: flex;
+        justify-content: center;
+      }
+      form {
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+      }
+      input,
+      textarea {
+        border: none;
+        border-bottom: 1px solid #000;
+        background: transparent;
+        padding: 0.6rem 0.2rem;
+        font-size: 1rem;
+        outline: none;
+        resize: none;
+      }
+      button {
+        margin-top: 1rem;
+        padding: 0.9rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 0.25rem;
+        background: #000;
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      button:hover {
+        background: #333;
+      }
+
+      /* ----- FOOTER ----- */
+      footer {
+        padding: 4rem 2rem;
+        text-align: center;
+        font-size: 0.75rem;
+        opacity: 0.4;
+      }
+
+      /* ----- ANIMATIONS ----- */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <div id="avatarWrap">
+          <video
+            id="introVideo"
+            src="intro.mp4"
+            playsinline
+            preload="auto"
+          ></video>
+          <div id="playOverlay">Click to Play</div>
+        </div>
+        <h1>
+          <span
+            style="
+              display: inline-block;
+              opacity: 0;
+              animation: fadeUp 0.8s forwards 0.4s;
+            "
+          >
+            Scroll to explore Jayden
+          </span>
+        </h1>
+      </div>
+    </section>
+
+    <!-- MAJOR PROJECT STRIP -->
+    <div class="video-band">
+      <video
+        id="majorVideo"
+        src="MajorProjectVideo.mp4"
+        preload="auto"
+        playsinline
+      ></video>
+      <button class="fullscreen-btn" id="fullscreenBtn">Fullscreen</button>
+    </div>
+    <div class="video-caption">Music by Suno</div>
+
+    <!-- ABOUT SECTION -->
+    <section class="about">
+      <h2 style="margin-bottom: 1rem">About Jayden</h2>
+      <p>
+        Jayden embodies momentum, discipline and freedom. Designed for
+        storytelling that thrives on energy and emotion, he channels the drive
+        of an athlete and the spirit of exploration. His connection to cycling
+        reflects momentum and discipline, qualities that define both his
+        character and the creative worlds he inhabits. Built for adaptability
+        across short and long-form media, Jayden brings fluidity, presence, and
+        purpose to every frame, capturing the essence of movement and human
+        connection with refined precision.
+      </p>
+    </section>
+
+    <!-- CONTACT -->
+    <div class="form-band">
+      <form onsubmit="handleSubmit(event)">
+        <input required placeholder="Name" aria-label="Name" />
+        <input required type="email" placeholder="Email" aria-label="Email" />
+        <textarea
+          required
+          rows="4"
+          placeholder="Enquiry"
+          aria-label="Message"
+        ></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </div>
+
+    <footer>© <span id="year"></span> Jayden</footer>
+
+    <!-- LIBRARIES -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/ScrollTrigger.min.js"></script>
+
+    <!-- IRIDESCENT BACKGROUND -->
+    <script>
+      const renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById("bgCanvas"),
+        alpha: true,
+      });
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+      const mat = new THREE.ShaderMaterial({
+        uniforms: {
+          time: { value: 0 },
+          mouse: { value: new THREE.Vector2() },
+          resolution: {
+            value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+          },
+        },
+        vertexShader: `void main(){gl_Position=vec4(position,1.0);}`,
+        fragmentShader: `
+    uniform float time;
+    uniform vec2 mouse;
+    uniform vec2 resolution;
+    vec3 palette(float t){ vec3 a=vec3(0.5),b=vec3(0.5),c=vec3(1.0),d=vec3(0.263,0.416,0.557); return a + b*cos(6.28318*(c*t+d)); }
+    void main(){
+      vec2 uv=(gl_FragCoord.xy-0.5*resolution)/resolution.y;
+      float d=length(uv-mouse*0.5);
+      vec3 col=palette(d+time*0.1);
+      gl_FragColor=vec4(col,0.25);
+    }`,
+      });
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+
+      window.addEventListener("resize", () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        mat.uniforms.resolution.value.set(
+          window.innerWidth,
+          window.innerHeight
+        );
+      });
+
+      const mouseNDC = new THREE.Vector2();
+      window.addEventListener("mousemove", (e) => {
+        mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseNDC.y = (1 - e.clientY / window.innerHeight) * 2 - 1;
+      });
+
+      function render(t) {
+        mat.uniforms.time.value = t * 0.001;
+        mat.uniforms.mouse.value.copy(mouseNDC);
+        renderer.render(scene, camera);
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    </script>
+
+    <!-- INTRO VIDEO PLAY/PAUSE -->
+    <script>
+      (() => {
+        const wrap = document.getElementById("avatarWrap");
+        const vid = document.getElementById("introVideo");
+        const over = document.getElementById("playOverlay");
+
+        wrap.addEventListener("click", () => {
+          if (vid.paused) {
+            vid.play();
+            over.style.opacity = "0";
+          } else {
+            vid.pause();
+            over.style.opacity = "1";
+          }
+        });
+        vid.addEventListener("ended", () => (over.style.opacity = "1"));
+      })();
+    </script>
+
+    <!-- MAJOR VIDEO PLAY/PAUSE + FULLSCREEN -->
+    <script>
+      (() => {
+        const band = document.querySelector(".video-band");
+        const vid = document.getElementById("majorVideo");
+        const fsBtn = document.getElementById("fullscreenBtn");
+
+        /* create overlay */
+        const over = document.createElement("div");
+        over.style.cssText = `
+    position:absolute; inset:0;
+    background:rgba(0,0,0,.45);
+    color:#fff; font-size:1.4rem; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+    letter-spacing:.5px; text-shadow:0 2px 6px rgba(0,0,0,.6);
+    transition:opacity .4s ease;
+  `;
+        over.textContent = "Press to play";
+        band.appendChild(over);
+
+        const hide = () => (over.style.opacity = "0");
+        const show = () => (over.style.opacity = "1");
+
+        band.addEventListener("click", (e) => {
+          if (e.target === fsBtn) return;
+          vid.paused ? (vid.play(), hide()) : (vid.pause(), show());
+        });
+        vid.addEventListener("ended", show);
+
+        fsBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          vid.requestFullscreen?.() ||
+            vid.webkitRequestFullscreen?.() ||
+            vid.msRequestFullscreen?.();
+        });
+      })();
+    </script>
+
+    <!-- GSAP + FORM -->
+    <script>
+      gsap.registerPlugin(ScrollTrigger);
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      function handleSubmit(e) {
+        e.preventDefault();
+        e.target.reset();
+        alert("Signal transmitted.");
+      }
+    </script>
+  </body>
+</html>
