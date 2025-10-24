@@ -87,7 +87,7 @@
       }
 
       .hero h1 {
-        margin: 5rem 0;
+        margin: 5rem 0; /* Adjust values as needed */
       }
 
       /* ----- INTRO VIDEO WRAPPER ----- */
@@ -137,10 +137,11 @@
         cursor: pointer;
         z-index: 2;
       }
-      .video-band iframe {
+      .video-band video {
         width: 100%;
         height: 100%;
-        border: 0;
+        object-fit: cover;
+        display: block;
       }
       .fullscreen-btn {
         position: absolute;
@@ -263,12 +264,15 @@
 
     <!-- MAJOR PROJECT STRIP -->
     <div class="video-band">
-      <iframe
-        src="https://player.vimeo.com/video/1130084857?autoplay=0&muted=0&loop=0&background=0"
-        frameborder="0"
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowfullscreen
-      ></iframe>
+      <div class="video-container">
+        <iframe
+          src="https://player.vimeo.com/video/1130084857?autoplay=0&muted=0&loop=0&background=0"
+          frameborder="0"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen
+        >
+        </iframe>
+      </div>
       <button class="fullscreen-btn" id="fullscreenBtn">Fullscreen</button>
     </div>
     <div class="video-caption">Music by Suno</div>
@@ -306,5 +310,135 @@
     <footer>© <span id="year"></span> Jayden</footer>
 
     <!-- LIBRARIES -->
-    <script src="https://cdn.jsdelivr.net
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/ScrollTrigger.min.js"></script>
 
+    <!-- IRIDESCENT BACKGROUND -->
+    <script>
+      const renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById("bgCanvas"),
+        alpha: true,
+      });
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+      const mat = new THREE.ShaderMaterial({
+        uniforms: {
+          time: { value: 0 },
+          mouse: { value: new THREE.Vector2() },
+          resolution: {
+            value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+          },
+        },
+        vertexShader: `void main(){gl_Position=vec4(position,1.0);}`,
+        fragmentShader: `
+    uniform float time;
+    uniform vec2 mouse;
+    uniform vec2 resolution;
+    vec3 palette(float t){ vec3 a=vec3(0.5),b=vec3(0.5),c=vec3(1.0),d=vec3(0.263,0.416,0.557); return a + b*cos(6.28318*(c*t+d)); }
+    void main(){
+      vec2 uv=(gl_FragCoord.xy-0.5*resolution)/resolution.y;
+      float d=length(uv-mouse*0.5);
+      vec3 col=palette(d+time*0.1);
+      gl_FragColor=vec4(col,0.25);
+    }`,
+      });
+      scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+
+      window.addEventListener("resize", () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        mat.uniforms.resolution.value.set(
+          window.innerWidth,
+          window.innerHeight
+        );
+      });
+
+      const mouseNDC = new THREE.Vector2();
+      window.addEventListener("mousemove", (e) => {
+        mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseNDC.y = (1 - e.clientY / window.innerHeight) * 2 - 1;
+      });
+
+      function render(t) {
+        mat.uniforms.time.value = t * 0.001;
+        mat.uniforms.mouse.value.copy(mouseNDC);
+        renderer.render(scene, camera);
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    </script>
+
+    <!-- INTRO VIDEO PLAY/PAUSE -->
+    <script>
+      (() => {
+        const wrap = document.getElementById("avatarWrap");
+        const vid = document.getElementById("introVideo");
+        const over = document.getElementById("playOverlay");
+
+        wrap.addEventListener("click", () => {
+          if (vid.paused) {
+            vid.play();
+            over.style.opacity = "0";
+          } else {
+            vid.pause();
+            over.style.opacity = "1";
+          }
+        });
+        vid.addEventListener("ended", () => (over.style.opacity = "1"));
+      })();
+    </script>
+
+    <!-- MAJOR VIDEO PLAY/PAUSE + FULLSCREEN -->
+    <script>
+      (() => {
+        const band = document.querySelector(".video-band");
+        const vid = document.getElementById("majorVideo");
+        const fsBtn = document.getElementById("fullscreenBtn");
+
+        /* create overlay */
+        const over = document.createElement("div");
+        over.style.cssText = `
+    position:absolute; inset:0;
+    background:rgba(0,0,0,.45);
+    color:#fff; font-size:1.4rem; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+    letter-spacing:.5px; text-shadow:0 2px 6px rgba(0,0,0,.6);
+    transition:opacity .4s ease;
+  `;
+        over.textContent = "Press to play";
+        band.appendChild(over);
+
+        const hide = () => (over.style.opacity = "0");
+        const show = () => (over.style.opacity = "1");
+
+        band.addEventListener("click", (e) => {
+          if (e.target === fsBtn) return;
+          vid.paused ? (vid.play(), hide()) : (vid.pause(), show());
+        });
+        vid.addEventListener("ended", show);
+
+        fsBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          vid.requestFullscreen?.() ||
+            vid.webkitRequestFullscreen?.() ||
+            vid.msRequestFullscreen?.();
+        });
+      })();
+    </script>
+
+    <!-- GSAP + FORM -->
+    <script>
+      gsap.registerPlugin(ScrollTrigger);
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      function handleSubmit(e) {
+        e.preventDefault();
+        e.target.reset();
+        alert("Signal transmitted.");
+      }
+    </script>
+  </body>
+</html>
